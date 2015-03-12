@@ -140,6 +140,8 @@ module Mongoid
           # if not passed a retry_sleep value, we sleep for the remaining life of the lock
           unless opts[:retry_sleep]
             locked_until = Mongoid::Locker::Wrapper.locked_until(self)
+            next unless locked_until # the lock might be released since the
+                                     # last check so make another attempt
             retry_sleep = locked_until - Time.now
           end
 
